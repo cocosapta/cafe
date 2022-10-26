@@ -1,0 +1,28 @@
+@extends('layouts.meja_layout')
+@section('content')
+@foreach($m as $item)
+<div class="col-12 col-sm-5 col-md-5 col-lg-2">
+  <article class="article article-style-b">
+    <div class="article-header">
+      <div class="article-image" data-background="{{ asset('storage/'. $item->photo) }}">
+      </div>
+    </div>
+    <div class="article-details">
+      <div class="article-title">
+        <h2><a href="">{{$item['nama']}}</a></h2>
+      </div>
+      <div class="article-title">
+
+        <p>Rp.{{$item['harga']}} </p>
+      </div>
+        <div class="article-cta">
+        <!-- <input type="number" name="jumlah" value="0" min="1" class="form-control"> -->
+        <br>
+          <a href="{{url('menu.order/')}}/{{$item->id}}" class="btn btn-primary">tambah</a>
+        </div>
+    </div>
+  </article>
+</div>
+
+@endforeach
+@endsection

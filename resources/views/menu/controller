@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Models\menu;
+use App\Models\Kode;
+use App\Models\Order;
+use Spatie\LaravelIgnition\Support\LivewireComponentParser;
+use Darryldecode\Cart\Cart;
+use Illuminate\Support\Facades\Session;
+
+class MejaController extends Controller
+{
+    public function index()
+    {
+        $user = auth()->user();
+        $cart = session("cart");
+        return view('menu.login')->with("cart", $cart);
+    }
+    public function masuk()
+    {
+        $user = auth()->user();
+        $cart = session("cart");
+    }
+    public function menu_order()
+    {
+        // dd(session("cart"));
+        $m = menu::all();
+        $cart = session("cart");
+        $menu = menu::list_menu();
+        return view('menu.dashboard', compact('m'))->with("cart", $cart);
+    }
+    public function order($id)
+    {
+        $cart = session("cart");
+        $menu = menu::detail_menu($id);
+        $cart[$id] = [
+            "nama" => $menu->nama,
+            "description" => $menu->description,
+            "harga" => $menu->harga,
+            "jumlah" =>  $menu->jumlah,
+        ];
+        session(["cart" => $cart]);
+        return redirect()->back();
+    }
+    public function order_hapus($id)
+    {
+        $cart = session("cart");
+        unset($cart[$id]);
+        session(["cart" => $cart]);
+        return redirect()->back();
+    }
+    public function order_tambah()
+    {
+        $cart = session("cart");
+        $user = auth()->user();
+        $id_cart = Kode::tambah_cart();
+        foreach ($cart as $ct => $val) {
+            $total = $val["jumlah"];
+            $meja = $user->name;
+            $id_menu = $ct;
+            Order::tambah_order($id_cart, $total, $meja, $id_menu);
+        }
+        session()->forget("cart");
+        return redirect()->route('checkout');
+    }
+    public function checkout(Request $request)
+    {
+
+        $cart = Kode::all();
+        $menu = Order::join('menu', 'menu.id', '=', 'order.id_menu')
+            ->select('menu.nama', 'menu.harga', 'order.total', 'order.id', 'order.id_cart')
+            ->get();
+        return view('menu.checkout', compact('menu'));
+    }
+    public function checkout_hapus($id)
+    {
+        $order = Order::find($id);
+        $order->delete();
+        return back();
+    }
+    public function checkout_edit(Request $request, $id)
+    {
+        $item = Order::find($id);
+        $item = $request->all();
+        Order::where(['id' => $id])->update([
+            'total' => $item['total'],
+
+        ]);
+        return redirect()->back();
+    }
+    // $posts = Post::with('user')->where('user_id', Auth::user()->id)->firstOrFail();
+    // return view('dashboard', ['posts' => $posts]);
+    //dashboard.blade.php
+    // @foreach ($posts as $post)
+    //   <div class="p-6 bg-white border-b border-gray-200">
+    //      <h1 class="text-2xl">{{ $post->title }}</h1>
+    //      <p>by {{ $post->user->name }}</p>
+    //   </div>
+    // @endforeach
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+  <title>Otomasi Cafe</title>
+
+  <!-- General CSS Files -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+  <!-- CSS Libraries -->
+
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="{{asset('/template')}}/assets/css/style.css">
+  <link rel="stylesheet" href="{{asset('/template')}}/assets/css/components.css">
+
+</head>
+
+<body>
+  <div id="app">
+    <div class="main-wrapper">
+      <div class="navbar-bg"></div>
+      <nav class="navbar navbar-expand-lg main-navbar">
+        <ul class="navbar-nav mr-3">
+          <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
+        </ul>
+      </nav>
+      <div class="main-sidebar">
+        <aside class="sidebar" id="sidebar">
+          <div class="sidebar-brand">
+            <a href="index.html">Stisla</a>
+          </div>
+          <div class="sidebar-brand sidebar-brand-sm">
+            <a href="index.html">St</a>
+          </div>
+          <ul class="sidebar-menu">
+            <li class="menu-header">Menu</li>
+            <li><a class="nav-link" href=""><i class="fas fa-fire"></i><span>Rekomendasi</span></a></li>
+            <li><a class="nav-link" href=""><i class="fas fa-glass"></i><span>Minuman</span></a></li>
+            <li><a class="nav-link" href=""><i class="fas fa-fire"></i><span>Cemilan</span></a></li>
+            <li><a class="nav-link" href=""><i class="fas fa-fire"></i><span>Sayuran</span></a></li>
+            <li><a class="nav-link" href=""><i class="fas fa-fire"></i><span>Makanan</span></a></li>
+          </ul>
+          <ul class="sidebar-menu">
+            <li class="menu-header">Pesan</li>
+            <li><a class="nav-link" href=""><i class="fas fa-fire"></i><span>Order</span></a></li>
+          </ul>
+        </aside>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <section class="section">
+          <div class="section-header">
+            <h1>Menu</h1>
+          </div>
+          <div class="section-body">
+            <div class="row">
+              @yield('content')
+              @if(empty($cart) || count($cart) == 0)
+              @else
+              @foreach ($cart as $ct => $val)
+              <?php
+              $total = 0;
+              $jumlah = count($cart);
+              $total += $jumlah;
+              ?>
+              <div class="footer-right" style="position: fixed;bottom: 50px;right: 50px;  ">
+                <a class="btn btn-primary" type="button" data-toggle="modal" data-target="#showcart" style="color:white ;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="color:white ;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                  </svg>
+                  {{$total}}
+                </a>
+              </div>
+              @endforeach
+              @endif
+            </div>
+          </div>
+        </section>
+
+      </div>
+      <footer class="main-footer">
+        <div class="footer-left">
+
+        </div>
+      </footer>
+    </div>
+  </div>
+  <div class="modal fade" id="showcart" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="largeModalLabel">Menu yang di tambah</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-striped table-hover table-md">
+                  @if(empty($cart) || count($cart) == 0)
+                  Anda belum Memilih Menu
+                  @else
+                  <?php
+                  $no = 1;
+                  ?>
+                  <tr>
+                    <th data-width="40">#</th>
+                    <th>Item</th>
+                    <th class="text-center">Harga</th>
+                    <th class="text-center">Deskripsi</th>
+
+                    <th class="text-right">Action</th>
+                  </tr>
+                  @foreach ($cart as $ct => $val)
+                  <tr>
+                    <td>{{$no++}}</td>
+                    <td>{{$val["nama"]}}</td>
+                    <td class="text-center">{{$val["description"]}}</td>
+                    <td class="text-center">{{$val["harga"]}}</td>
+                    <td class="text-right">
+                      <a href="{{url('menu/hapus/'.$ct)}}">batal</a>
+                    </td>
+                  </tr>
+                  @endforeach
+                  @endif
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="{{url('tambah.order')}}" type="submit" class="btn btn-primary btn-flat m-b-30 m-t-30">checkout</a>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- General JS Scripts -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="{{asset('/template')}}/assets/js/stisla.js"></script>
+
+  <!-- JS Libraies -->
+
+  <!-- Template JS File -->
+  <script src="{{asset('/template')}}/assets/js/scripts.js"></script>
+  <script src="{{asset('/template')}}/assets/js/custom.js"></script>
+
+  <!-- Page Specific JS File -->
+
+</body>
+
+</html>
